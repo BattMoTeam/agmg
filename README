@@ -1,0 +1,148 @@
+This file is part of AGMG software package,
+Release 3.1.2 built on "Jan 17 2012"
+
+   AGMG is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   AGMG is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with AGMG.  If not, see <http://www.gnu.org/licenses/>.
+
+Up-to-date copies of the AGMG package can be obtained
+from the Web pages <http://homepages.ulb.ac.be/~ynotay/AGMG>.
+
+You can acknowledge, citing references [1] [2], and [3], the contribution
+of this package in any scientific publication dependent upon it use.
+
+ [1] Y. Notay, An aggregation-based algebraic multigrid method,
+    Electronic Transactions on Numerical Analysis, vol. 37, pp. 123-146, 2010
+
+ [2] A. Napov and Y. Notay, An algebraic multigrid method with guaranteed
+    convergence rate, to appear in SIAM J. Sci. Comput., 2012.
+
+ [3] Y. Notay, Aggregation-based algebraic multigrid for convection-diffusion
+    equations, Report GANMN 11-01, Universite Libre de Bruxelles, Brussels,
+    Belgium, 2011.
+
+See the accompanying userguide for more details on how to use the software,
+and the README file for installation instructions.
+
+AGMG Copyright (C) 2011 Yvan NOTAY
+
+You read this file because you have successfully downloaded and
+uncompress the package.
+
+Assumed you did this in directory /MYDIR
+(for instance, your home directory)
+This created a directory /MYDIR/AGMG_3.1.2 and the present file is
+/MYDIR/AGMG_3.1.2/README
+
+You will find the documentation in /MYDIR/AGMG_3.1.2/Doc/
+(a userguide giving additional information and the papers referred above).
+
+Fortran 90
+----------
+
+The userguide refers to two examples (one sequential and one parallel).
+The related sources are located in /MYDIR/AGMG_3.1.2/Example_seq/
+and /MYDIR/AGMG_3.1.2/Example_par/, respectively. There you will find also
+a Makefile allowing their compilation entering the command "make".
+You possibly need to edit the Makefile to correct the name of the
+compiler and set your favourite compilation options.
+
+In fact, these Makefile just make sure that the application program
+is compiled together with SRC/dagmg.f90 and SRC/dagmg_mumps.f90 in the
+sequential case, and with SRC/dagmg_par.f90  in the parallel case.
+You may proceed in a similar way with any application program.
+(Hence, AGMG need not be installed as a library).
+
+Note, however, that the Makefile also avoids recompiling dagmg.f90
+dagmg_mumps.f90 or dagmg_par.f90 when only the application program
+has been changed. This is strongly recommended. In particular,
+the compilation of dagmg_mumps.f90 is time consuming.
+
+Please note also that, with the most recent versions of gfortran
+(4.6.0 and above), dagmg_mumps.f90 cannot be compiled with highest
+optimization: it is needed to use the options: "-O2 -fno-whole-file".
+This is harmless because normally only a small amount of time
+is spent in this part of the code; most time is spent in
+subroutines from the file dagmg.f90, which can be compiled
+trouble free with highest optimization level.
+
+The provided examples use the double precision version. To use the
+single, complex or double complex version, proceed similarly
+exchanging in the file the prefix "d" for, respectively, "s", "c" or "z".
+
+AGMG requires LAPACK and BLAS libraries; in addition, the parallel
+version requires the MUMPS library. These software are public domain and
+easily found on the Web, see the userguide for references. In addition,
+LAPACK and BLAS come pre-installed with most compilers.
+If you don't have LAPACK pre-installed, you may compile, instead of downloading
+the full library, the file SRC/lapack_agmg.f together with other program
+files. This will provide needed LAPACK routines. Similarly, if you don't
+have BLAS pre-installed, you may compile, instead of downloading
+the full library, the file SRC/blas_agmg.f together with other program
+files. This will provide needed BLAS routines.
+We however strongly recommend to use pre-installed libraries whenever available.
+
+Note that the provided Makefile needs possibly to be edited to correct the
+variable BLASLAPACK which contains the option for linking with LAPACK & BLAS.
+The Makefile of the parallel example also refers to several variables,
+which should be edited according your local installation.
+
+
+Matlab
+------
+
+Files for the Matlab interface are located in directory /MYDIR/AGMG_3.1.2/Matlab/
+
+The user interface is in the file agmg.m (matlab function)
+Enter "help agmg" in the matlab environment for basic usage.
+A more detailed description of optional parameters and of
+verbose output is provided in the userguide in /MYDIR/AGMG_3.1.2/Doc/
+(see in particular Sections 2.2 and 2.4, and also Sections 4 and 5
+for some special usages)
+
+Besides, we also provide in the file agtwolev.m a matlab function
+that only performs aggregation according to the algorithm in
+either [2] or [3]. This is not intended to help solving linear systems,
+but rather to facilitate further research and developments.
+Enter "help agtwolev" in the matlab environment for more details
+on function usage, which allows to easily play with the parameters
+referenced in [2,3].
+
+For most users, the precompiled files dmtlagmg.mex??? and zmtlagmg.mex???
+(where ??? depends upon your OS and architecture) are all what is
+needed to run properly the function in agmg.m ; i.e., you need only to place
+the three files (agmg.m , dmtlagmg.mex??? and zmtlagmg.mex??? )
+in a directory in which Matlab can find scripts & executables.
+
+Similarly, dmtlagtwolev.mex??? contains all what is needed to run agtwolev.m.
+
+If no precompiled file exists for your architecture, you can generate them
+with the commands
+
+mex -O -largeArrayDims dmtlagmg.c dagmg_mex.f90 dagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -O -largeArrayDims zmtlagmg.c zagmg_mex.f90 zagmg_mumps_mex.f90 -lmwlapack -lmwblas
+mex -O -largeArrayDims dmtlagtwolev.c dagtwolev_mex.f90 -lmwlapack -lmwblas
+
+This compilation can occasionally raise some difficulties (it requires
+proper C and FORTRAN compilers to be installed). If you generate in this
+way dmtlagmg.mex??? , zmtlagmg.mex??? and dmtlagtwolev.mex??? files that
+are so far missing in the package, it is a good idea to forward them to us
+(mailto:ynotay@ulb.ac.be).
+They will then be made available to everybody.
+
+
+Release notes
+-------------
+See the userguide in /MYDIR/AGMG_3.1.2/Doc/ (in particular Section 1.2)
+for a description of changes from previous releases 1.x and 2.x
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
